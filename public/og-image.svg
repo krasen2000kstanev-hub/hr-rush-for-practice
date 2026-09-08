@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="g1" cx="20%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#2fd9e8" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#2fd9e8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="85%" cy="10%" r="55%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g3" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0d0f1c"/>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+  <rect width="1200" height="630" fill="url(#g3)"/>
+  <text x="80" y="260" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" fill="#ffffff">HR<tspan fill="#2fd9e8">:</tspan>Rush for practice</text>
+  <text x="80" y="340" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#ffffff">Твоята кариера не започва с CV.</text>
+  <text x="80" y="392" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#2fd9e8">Започва с практика.</text>
+  <text x="80" y="470" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#c3c7dc">1 130+ студенти · 900+ интервюта · 73+ компании</text>
+</svg>

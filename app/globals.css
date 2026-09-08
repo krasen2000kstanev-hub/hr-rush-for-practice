@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-navy-950 text-navy-50 antialiased;
+  }
+
+  ::selection {
+    @apply bg-cyan-400/30 text-white;
+  }
+
+  /* Visible, on-brand focus ring for keyboard navigation (accessibility). */
+  :focus-visible {
+    outline: 2px solid theme("colors.cyan.400");
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .container-px {
+    @apply px-5 sm:px-6 lg:px-8;
+  }
+}
