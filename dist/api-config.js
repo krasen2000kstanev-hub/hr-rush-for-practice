@@ -1,0 +1,1 @@
+window.__LEADERBOARD_API__='__API_BASE__';window.__COGNITO_CLIENT_ID__='__COGNITO_CLIENT_ID__';window.__AWS_REGION__='__AWS_REGION__';

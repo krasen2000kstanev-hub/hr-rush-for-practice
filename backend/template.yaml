@@ -1,0 +1,142 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: HR:Rush for Practice live ranking backend
+
+Parameters:
+  FrontendOrigin:
+    Type: String
+    Description: Exact GitHub Pages origin, for example https://org.github.io
+  TeamsSheetUrl:
+    Type: String
+  CompaniesSheetUrl:
+    Type: String
+  Season:
+    Type: Number
+    Default: 9
+  BudgetEmail:
+    Type: String
+    Description: Email that receives the monthly $1 budget alert
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    MemorySize: 256
+    Timeout: 15
+    CodeUri: .
+    Environment:
+      Variables:
+        SEASON: !Ref Season
+        CURRENT_TABLE: !Ref CurrentTable
+        HISTORY_TABLE: !Ref HistoryTable
+        TEAMS_SHEET_URL: !Ref TeamsSheetUrl
+        COMPANIES_SHEET_URL: !Ref CompaniesSheetUrl
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins:
+        - !Ref FrontendOrigin
+      AllowHeaders:
+        - content-type
+        - authorization
+      AllowMethods:
+        - GET
+        - POST
+        - OPTIONS
+
+Resources:
+  CurrentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PROVISIONED
+      ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 }
+      AttributeDefinitions: [{ AttributeName: id, AttributeType: S }]
+      KeySchema: [{ AttributeName: id, KeyType: HASH }]
+
+  HistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PROVISIONED
+      ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 }
+      AttributeDefinitions:
+        - { AttributeName: season, AttributeType: N }
+        - { AttributeName: snapshotAt, AttributeType: S }
+      KeySchema:
+        - { AttributeName: season, KeyType: HASH }
+        - { AttributeName: snapshotAt, KeyType: RANGE }
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: hrr-admin
+      AdminCreateUserConfig: { AllowAdminCreateUserOnly: true }
+      AutoVerifiedAttributes: [email]
+      UsernameAttributes: [email]
+      Policies:
+        PasswordPolicy: { MinimumLength: 14, RequireUppercase: true, RequireLowercase: true, RequireNumbers: true, RequireSymbols: true }
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      ExplicitAuthFlows: [ALLOW_USER_PASSWORD_AUTH, ALLOW_REFRESH_TOKEN_AUTH]
+
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Auth:
+        Authorizers:
+          AdminAuthorizer:
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
+              audience: [!Ref UserPoolClient]
+            Identity: { Headers: [Authorization] }
+
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/app.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref CurrentTable }
+        - DynamoDBCrudPolicy: { TableName: !Ref HistoryTable }
+      Events:
+        Leaderboard:
+          Type: HttpApi
+          Properties: { ApiId: !Ref Api, Path: /api/leaderboard, Method: GET }
+        Companies:
+          Type: HttpApi
+          Properties: { ApiId: !Ref Api, Path: /api/companies, Method: GET }
+        AdminStatus:
+          Type: HttpApi
+          Properties: { ApiId: !Ref Api, Path: /api/admin/status, Method: GET, Auth: { Authorizer: AdminAuthorizer } }
+        AdminHistory:
+          Type: HttpApi
+          Properties: { ApiId: !Ref Api, Path: /api/admin/history, Method: GET, Auth: { Authorizer: AdminAuthorizer } }
+        AdminSync:
+          Type: HttpApi
+          Properties: { ApiId: !Ref Api, Path: /api/admin/sync, Method: POST, Auth: { Authorizer: AdminAuthorizer } }
+        ScheduleSync:
+          Type: ScheduleV2
+          Properties: { ScheduleExpression: rate(1 minute), ScheduleExpressionTimezone: Europe/Sofia, Input: '{"source":"schedule"}' }
+
+  MonthlyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: hrr-monthly-budget
+        BudgetLimit: { Amount: 1, Unit: USD }
+        TimeUnit: MONTHLY
+        BudgetType: COST
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - { SubscriptionType: EMAIL, Address: !Ref BudgetEmail }
+
+Outputs:
+  ApiUrl: { Value: !Sub https://${Api}.execute-api.${AWS::Region}.amazonaws.com }
+  UserPoolId: { Value: !Ref UserPool }
+  UserPoolClientId: { Value: !Ref UserPoolClient }

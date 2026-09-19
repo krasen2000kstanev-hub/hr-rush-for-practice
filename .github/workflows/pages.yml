@@ -1,0 +1,37 @@
+name: Deploy leaderboard to GitHub Pages
+
+on:
+  push:
+    branches: [design-refresh]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Configure API endpoint
+        env:
+          API_BASE: ${{ vars.LEADERBOARD_API_BASE }}
+          COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: sed -i "s|__API_BASE__|${API_BASE}|g" dist/api-config.js
+      - name: Configure Cognito
+        env:
+          COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: sed -i "s|__COGNITO_CLIENT_ID__|${COGNITO_CLIENT_ID}|g; s|__AWS_REGION__|${AWS_REGION}|g" dist/api-config.js
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
