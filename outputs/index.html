@@ -14,6 +14,8 @@
     /* Keep one stable scene behind both leaderboard modes. */
     body{background:linear-gradient(135deg,#07111f 0%,#0b1d33 52%,#11192d 100%) fixed}
     #starfield{opacity:.86;mix-blend-mode:screen}
+    .admin.show{position:fixed;top:88px;right:22px;z-index:3;width:min(520px,calc(100vw - 44px));margin:0;box-shadow:0 24px 70px #000b}
+    @media(max-width:750px){.admin.show{top:118px;right:12px;width:calc(100vw - 24px)}}
   </style>
   <style>
     .company-section{margin-top:16px}
