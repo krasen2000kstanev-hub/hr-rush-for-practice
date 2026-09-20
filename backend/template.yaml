@@ -69,9 +69,8 @@ Resources:
       UserPoolName: hrr-admin
       AdminCreateUserConfig: { AllowAdminCreateUserOnly: true }
       AutoVerifiedAttributes: [email]
-      UsernameAttributes: [email]
       Policies:
-        PasswordPolicy: { MinimumLength: 14, RequireUppercase: true, RequireLowercase: true, RequireNumbers: true, RequireSymbols: true }
+        PasswordPolicy: { MinimumLength: 14, RequireUppercase: true, RequireLowercase: true, RequireNumbers: true, RequireSymbols: false }
 
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
