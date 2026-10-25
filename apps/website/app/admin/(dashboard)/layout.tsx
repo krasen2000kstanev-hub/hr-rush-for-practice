@@ -10,7 +10,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
   return (
     <div className="flex min-h-screen bg-navy-50">
-      <AdminSidebar adminName={admin.full_name} />
+      <AdminSidebar adminName={(admin as { full_name: string | null }).full_name} />
       <div className="flex-1 overflow-x-hidden">
         <AdminMobileNav />
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-8">{children}</div>

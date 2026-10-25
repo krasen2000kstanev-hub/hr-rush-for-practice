@@ -53,6 +53,7 @@ export interface Database {
           season: string;
         };
         Update: Partial<Database["public"]["Tables"]["student_applications"]["Row"]>;
+        Relationships: [];
       };
       admins: {
         Row: {
@@ -66,6 +67,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["admins"]["Row"]>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

@@ -44,7 +44,7 @@ export function ApplicationDetail({ application }: { application: StudentApplica
     const supabase = createClient();
     const { error: updateError } = await supabase
       .from("student_applications")
-      .update({ application_status: status, admin_notes: notes })
+      .update({ application_status: status, admin_notes: notes } as never)
       .eq("id", application.id);
 
     setSaving(false);

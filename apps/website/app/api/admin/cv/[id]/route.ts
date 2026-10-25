@@ -33,14 +33,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     .eq("id", params.id)
     .maybeSingle();
 
-  if (error || !application?.cv_file_path) {
+  const cvApplication = application as { cv_file_path: string | null } | null;
+  if (error || !cvApplication?.cv_file_path) {
     return NextResponse.json({ error: "CV файлът не е намерен." }, { status: 404 });
   }
 
   const adminClient = createAdminClient();
   const { data: signed, error: signError } = await adminClient.storage
     .from(CV_STORAGE_BUCKET)
-    .createSignedUrl(application.cv_file_path, 60);
+    .createSignedUrl(cvApplication.cv_file_path, 60);
 
   if (signError || !signed?.signedUrl) {
     return NextResponse.json({ error: "Неуспешно генериране на връзка за изтегляне." }, { status: 500 });

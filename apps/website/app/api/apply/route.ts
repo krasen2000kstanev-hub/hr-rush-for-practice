@@ -209,6 +209,17 @@ export async function POST(request: NextRequest) {
     console.error("[api/apply] Insert failed:", insertError);
     // Best-effort cleanup of the uploaded file so we don't leak orphans.
     await supabase.storage.from(CV_STORAGE_BUCKET).remove([storagePath]);
+
+    // The pre-check improves the normal UX, but concurrent submissions can
+    // still race. The database unique index is the final authority.
+    if (insertError?.code === "23505") {
+      return jsonError(
+        "Изглежда вече си кандидатствал/а с този имейл. Ако искаш да актуализираш информацията си, свържи се с нас.",
+        409,
+        "DUPLICATE_APPLICATION"
+      );
+    }
+
     return jsonError("Възникна грешка. Моля, опитай отново.", 500, "INSERT_FAILED");
   }
 

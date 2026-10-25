@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HR Rush — Mission Hub</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; color: #172033; background: #f5f7fb; }
+    body { margin: 0; } header { background: #172033; color: white; padding: 18px 6vw; display:flex; justify-content:space-between; align-items:center; }
+    main { max-width: 1100px; margin: 32px auto; padding: 0 20px; } .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+    .card { background:white; border-radius:16px; padding:20px; box-shadow:0 5px 20px #18233d12; } .muted { color:#697386; }
+    button { background:#5b4bdb; color:white; border:0; border-radius:10px; padding:11px 16px; cursor:pointer; } button.secondary { background:#e9eafa; color:#34308a; }
+    .status { display:inline-block; padding:5px 9px; border-radius:999px; background:#e9f7ef; color:#18794e; font-size:12px; }
+    .topline { display:flex; justify-content:space-between; gap:12px; align-items:center; } a { color:#5145cd; } header a { color:white; text-decoration:none; margin-right:14px; font-size:13px; } header a:hover { text-decoration:underline; }
+    dialog { border:0; border-radius:16px; width:min(560px,90vw); } textarea, input { width:100%; box-sizing:border-box; margin:8px 0 14px; padding:11px; border:1px solid #d9deea; border-radius:9px; }
+  </style>
+</head>
+<body>
+  <header><strong>HR Rush · Mission Hub</strong><div><a href="https://sofiasummit.bg/events/hr-rushforpractice/ranking/" target="_blank" rel="noreferrer">Класация ↗</a><span id="auth"><button id="login">Вход с Google</button></span></div></header>
+  <main><section id="app"><div class="card"><h2>Добре дошли</h2><p class="muted">Влезте, за да видите мисиите и прогреса на отбора.</p></div></section></main>
+  <dialog id="submitDialog"><form method="dialog" id="submitForm"><h2 id="dialogTitle">Изпрати мисия</h2><label>Линк към доказателство<input id="evidenceLink" type="url" placeholder="https://..." /></label><label>Бележка<textarea id="evidenceNote" rows="5" placeholder="Как изпълних мисията?"></textarea></label><button value="submit">Изпрати за проверка</button> <button class="secondary" value="cancel">Отказ</button></form></dialog>
+  <script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>
