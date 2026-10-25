@@ -4,6 +4,7 @@
 /apps/website/node_modules
 /.next
 /apps/website/.next
+/apps/website/graphify-out/cache
 /work
 *.tsbuildinfo
 /.pnp
